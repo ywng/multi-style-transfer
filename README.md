@@ -9,18 +9,28 @@ It is based on the pytorch [fast-neural-style](https://github.com/pytorch/exampl
 
 Train
 ```
-python neural_style.py train --dataset </path/to/train-dataset> --style-image </path/to/style/image> --save-model-dir </path/to/save-model/folder> --epochs 2 --cuda 1 --batch-size 4
+python neural_style.py train --dataset /scratch/ywn202/style_train_data --style-image ./images/style_images/ --save-model-dir ./trained_models --epochs 5 --cuda 1 --log-interval 100 --batch-size 12
 ```
-* `--style-image`: the code will grab all files under the path as style images
-* `--batch-size`: number of images fed in each batch does not need to be the same to the number of style images
+* `--dataset`: the content images that used to train the tranformer network in fast-neural-style-transfer.
+* `--style-image`: the dir where the style images stored. Images should be in .jpg format.
+* `--batch-size`: number of images fed in each batch does not need to be the same to the number of style images.
 
-Stylize 
+Stylize Image
 ```
-python neural_style.py eval --content-image </path/to/content/image> --model </path/to/saved/model> --output-image </path/to/output/image> --cuda 0 --style-num 19 --style-id 18
+python neural_style.py eval --content-image ./images/content_images/hkbuilding.jpg --model ./trained_models/epoch_5_Sat_Dec__1_102704_2018_100000_10000000000.model --output-image hkbuilding --cuda 1 --style-num 4 --style-control 0 0 1 0
 ```
-* `--dataset`: path to training dataset, the path should point to a folder containing another folder with all the training images
-* `--style-num`: total number of style images, must be the same as the amount used in training
-* `--style-id`: a number from `0` to `style_num - 1`, indicating which style to transfer to
+* `--content-image`: the image to stylized.
+* `--model`: the trained model with the transformer network to stylize the image.
+* `--output-image`: 
+* `--style-num`: total number of style images, must be the same as the amount used in training.
+* `--style-control`: a vector to specify which style(s) is/are tranferred. 
+
+Stylize Video
+```
+
+```
+* `--style-num`: total number of style images, must be the same as the amount used in training.
+* `--style-control`: a vector to specify which style(s) is/are tranferred. 
 
 
 ## Results

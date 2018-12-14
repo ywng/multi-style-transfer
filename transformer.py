@@ -50,7 +50,7 @@ class ConditionalInstanceNorm2d(torch.nn.Module):
     def __init__(self, style_num, in_channels):
         super(ConditionalInstanceNorm2d, self).__init__()
         self.condInstanceNorm = torch.nn.ModuleList()
-        #we have instance norm for each style
+        # we have instance norm for each style
         for i in range(style_num):
             self.condInstanceNorm.append(torch.nn.InstanceNorm2d(in_channels, affine=True))
      

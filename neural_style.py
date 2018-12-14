@@ -17,7 +17,7 @@ from torchvision import datasets
 from torchvision import transforms
 
 import utils
-from transformer_net import TransformerNet
+from transformer import TransformerNet
 from vgg import Vgg16
 
 
@@ -52,11 +52,11 @@ def train(args):
     style_num = len(style_image)
     print("Total number of styles: ", style_num)
     for style_id, style_img in enumerate(style_image):
-        print("id: ", style_id, "image: ", style_img )
+        print("id: %3s image: %30s" % (style_id, style_img))
 
     transformer = TransformerNet(style_num=style_num)
 
-    if os.path.isfile(args.resume):
+    if args.resume and os.path.isfile(args.resume):
         state_dict = torch.load(args.resume)
         transformer.load_state_dict(state_dict)
 
@@ -206,7 +206,7 @@ def main():
                                   help="number of images after which the training loss is logged, default is 250")
     train_arg_parser.add_argument("--checkpoint-interval", type=int, default=1000,
                                   help="number of batches after which a checkpoint of the trained model will be created")
-    train_arg_parser.add_argument("--resume", type=str, required=True,
+    train_arg_parser.add_argument("--resume", type=str,
                                  help="saved checkpoint to resume training.")
     
 
