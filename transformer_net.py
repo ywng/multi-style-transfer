@@ -1,19 +1,18 @@
-# mostly borrowed from https://github.com/pytorch/examples/blob/master/fast_neural_style/neural_style/vgg.py
-# add a class for Conditional Instance Normalization
-
+# Modified from https://github.com/pytorch/examples/blob/master/fast_neural_style/neural_style/
+# The main changes are conditional instance normalization logic 
 import torch
 
 class TransformerNet(torch.nn.Module):
     def __init__(self, style_num):
         super(TransformerNet, self).__init__()
         self.conv1 = ConvLayer(3, 32, kernel_size = 9, stride = 1) 
-        self.in1 = batch_InstanceNorm2d(style_num, 32)
+        self.in1 = ConditionalInstanceNorm2d(style_num, 32)
 
         self.conv2 = ConvLayer(32, 64, kernel_size = 3, stride = 2)
-        self.in2 = batch_InstanceNorm2d(style_num, 64)
+        self.in2 = ConditionalInstanceNorm2d(style_num, 64)
 
         self.conv3 = ConvLayer(64, 128, kernel_size = 3, stride = 2)
-        self.in3 = batch_InstanceNorm2d(style_num, 128)
+        self.in3 = ConditionalInstanceNorm2d(style_num, 128)
 
         self.res1 = ResidualBlock(128)
         self.res2 = ResidualBlock(128)
@@ -21,9 +20,9 @@ class TransformerNet(torch.nn.Module):
         self.res4 = ResidualBlock(128)
         self.res5 = ResidualBlock(128)
         self.deconv1 = UpsampleConvLayer(128, 64, kernel_size = 3, stride = 1, upsample = 2)
-        self.in4 = batch_InstanceNorm2d(style_num, 64)
+        self.in4 = ConditionalInstanceNorm2d(style_num, 64)
         self.deconv2 = UpsampleConvLayer(64, 32, kernel_size = 3, stride = 1, upsample = 2)
-        self.in5 = batch_InstanceNorm2d(style_num, 32)
+        self.in5 = ConditionalInstanceNorm2d(style_num, 32)
         self.deconv3 = ConvLayer(32, 3, kernel_size = 9, stride = 1)
         self.relu = torch.nn.ReLU()
 
@@ -43,21 +42,18 @@ class TransformerNet(torch.nn.Module):
         
         return y
 
-class batch_InstanceNorm2d(torch.nn.Module):
+class ConditionalInstanceNorm2d(torch.nn.Module):
     """
     Conditional Instance Normalization
     introduced in https://arxiv.org/abs/1610.07629
-    created and applied based on my limited understanding, could be improved
     """
     def __init__(self, style_num, in_channels):
-        super(batch_InstanceNorm2d, self).__init__()
+        super(ConditionalInstanceNorm2d, self).__init__()
         self.condInstanceNorm = torch.nn.ModuleList()
         #we have instance norm for each style
         for i in range(style_num):
             self.condInstanceNorm.append(torch.nn.InstanceNorm2d(in_channels, affine=True))
-
-        #self.inns = torch.nn.ModuleList([torch.nn.InstanceNorm2d(in_channels, affine=True) for i in range(style_num)])
-
+     
     def forward(self, x, style_control):
         out = []
         for i in range(x.shape[0]):
@@ -69,7 +65,6 @@ class batch_InstanceNorm2d(torch.nn.Module):
             out.append(out_xi / total_weight)
         out = torch.stack(out)
 
-        #out = torch.stack([self.inns[style_id[i]](x[i].unsqueeze(0)).squeeze_(0) for i in range(len(style_id))])
         return out
 
 class ConvLayer(torch.nn.Module):

@@ -1,4 +1,8 @@
-# mostly borrowed from https://github.com/pytorch/examples/blob/master/fast_neural_style/neural_style/vgg.py
+# Modified from https://github.com/pytorch/examples/blob/master/fast_neural_style/neural_style/
+# The main changes are 
+# 1) conditional instance normalization logic 
+# 2) allow user to choose and combine multiple styles to transfer
+# 3) video multiple style combine and transfer
 
 import argparse
 import os
@@ -46,7 +50,9 @@ def train(args):
     
     style_image = [f for f in os.listdir(args.style_image)]
     style_num = len(style_image)
-    print(style_num)
+    print("Total number of styles: ", style_num)
+    for style_id, style_img in enumerate(style_image):
+        print("id: ", style_id, "image: ", style_img )
 
     transformer = TransformerNet(style_num=style_num)
 

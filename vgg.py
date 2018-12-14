@@ -1,10 +1,7 @@
-# borrowed from https://github.com/pytorch/examples/blob/master/fast_neural_style/neural_style/vgg.py
-
 from collections import namedtuple
 
 import torch
 from torchvision import models
-
 
 class Vgg16(torch.nn.Module):
     def __init__(self, requires_grad=False):
