@@ -1,5 +1,5 @@
 # Multiple Style Combine & Transfer - Image / Video
-It is based on the pytorch [fast-neural-style](https://github.com/pytorch/examples/tree/master/fast_neural_style) example for artistic style transfer. We further modifies the instance normalization in the transform network, making it conditional with multiple style images. So, you can combine effects from multiple style images and transfer to a target image. We also use this model to transfer videos in the multiple-style-combined ways. But note that the video style transfer is not real time. The video is pre-processed frame-by-frame and converted back to video after style transfer.
+It is based on the pytorch [fast-neural-style](https://github.com/pytorch/examples/tree/master/fast_neural_style) example for artistic style transfer. We further modify the instance normalization in the transform network, making it conditional with multiple style images. So, you can combine effects from multiple style images and transfer to a target image. We also use this model to transfer videos in the multiple-style-combined ways. But note that the video style transfer is not real time. The video is pre-processed frame-by-frame and converted back to video after style transfer.
 
 ### Training content image datasets
 [COCO 2014 Training images dataset [83K/13GB]](http://images.cocodataset.org/zips/train2014.zip)
@@ -26,8 +26,9 @@ python neural_style.py eval --content-image </path/to/content/image> --model </p
 ## Results
 
 ### Pretrained model
-Trained models are saved in the **trained_models** folder
+Models trained by us are saved in the **trained_models** folder. It is trained with the style images stored in the /images/style_images
 
+Example of combining 4 different styles:
 <div align='center'>
   <img src='images/content_images/hkbuilding.jpg' height="200px">		
 </div>
@@ -35,4 +36,3 @@ Trained models are saved in the **trained_models** folder
 <p>
 <img src="images/output_images/hkbuilding_styles_combined.jpg" width="1000" height="550" />
 </p>
-Figure1. Using one model and making multi style transfer image. Center image is mixed with 4 style
