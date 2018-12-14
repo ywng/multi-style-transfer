@@ -1,0 +1,6 @@
+run.txt
+__pycache__/*
+content/*
+output/*
+style/*
+checkpoint/*

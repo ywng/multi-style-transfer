@@ -1,12 +1,11 @@
-# pytorch multiple style transfer
+# Multiple Style Combine & Transfer - Image / Video
+It is based on the pytorch [fast-neural-style](https://github.com/pytorch/examples/tree/master/fast_neural_style) example for artistic style transfer. We further modifies the instance normalization in the transform network, making it conditional with multiple style images. So, you can combine effects from multiple style images and transfer to a target image. We also use this model to transfer videos in the multiple-style-combined ways. But note that the video style transfer is not real time. The video is pre-processed frame-by-frame and converted back to video after style transfer.
 
-Built based on the pytorch [fast-neural-style](https://github.com/pytorch/examples/tree/master/fast_neural_style) example for artistic style transfer, this repository try to re-implemented *Conditional Instance Normalization* layers to train transfer network with **multiple** style images at the same time. What I did here is basically replaced all *instance normalization* layers in [fast-neural-style](https://github.com/pytorch/examples/tree/master/fast_neural_style) with *conditional instance normalization* layers
+### Training content image datasets
+[COCO 2014 Training images dataset [83K/13GB]](http://images.cocodataset.org/zips/train2014.zip)
 
-*Conditional Instance Normalization* was introduced in [A Learned Representation For Artistic Style](https://arxiv.org/abs/1610.07629) and implemented with [Google Magenta TensorFlow](https://github.com/tensorflow/magenta/tree/master/magenta/models/image_stylization). I first learned this paper while reading [Joel Moniz Lasagne and Theano implementation](https://github.com/joelmoniz/gogh-figure). The creation and usage of the method in this repository is based on my limit knowledge in python, pytorch and neural network. 
 
 ## Usage
-
-Please refer to [fast-neural-style](https://github.com/pytorch/examples/tree/master/fast_neural_style) for more details. 
 
 Train
 ```
@@ -26,43 +25,14 @@ python neural_style.py eval --content-image </path/to/content/image> --model </p
 
 ## Results
 
-### Training content image datasets
-
-[COCO 2014 Training images dataset [83K/13GB]](http://images.cocodataset.org/zips/train2014.zip)
-
-### Training style images
-
-I used 19 style images, most of which are from other great style-transfer-related Github repos I read through:
-* [pytorch fast-neural-style](https://github.com/pytorch/examples/tree/master/fast_neural_style/images/style-images)
-* [jcjohnson](https://github.com/jcjohnson/fast-neural-style/tree/master/images/styles)
-* [hwalsuklee](https://github.com/hwalsuklee/tensorflow-style-transfer/tree/master/images)
-
 ### Pretrained model
-
-Model used in the following examples can be found in the **pytorch_models** folder
-
-<div align='center'>
-  <img src='images/content_images/river.jpg' height="200px">		
-</div>
+Trained models are saved in the **trained_models** folder
 
 <div align='center'>
-  <img src='images/output_images/river_style0.jpg' height="200px">
-  <img src='images/output_images/river_style1.jpg' height="200px">
-  <img src='images/output_images/river_style2.jpg' height="200px">
-  <img src='images/output_images/river_style3.jpg' height="200px">
-  <img src='images/output_images/river_style4.jpg' height="200px">
-  <img src='images/output_images/river_style5.jpg' height="200px">
-  <img src='images/output_images/river_style6.jpg' height="200px">
-  <img src='images/output_images/river_style7.jpg' height="200px">
-  <img src='images/output_images/river_style8.jpg' height="200px">
-  <img src='images/output_images/river_style9.jpg' height="200px">
-  <img src='images/output_images/river_style10.jpg' height="200px">
-  <img src='images/output_images/river_style11.jpg' height="200px">
-  <img src='images/output_images/river_style12.jpg' height="200px">
-  <img src='images/output_images/river_style13.jpg' height="200px">
-  <img src='images/output_images/river_style14.jpg' height="200px">
-  <img src='images/output_images/river_style15.jpg' height="200px">
-  <img src='images/output_images/river_style16.jpg' height="200px">
-  <img src='images/output_images/river_style17.jpg' height="200px">
-  <img src='images/output_images/river_style18.jpg' height="200px">
+  <img src='images/content_images/hkbuilding.jpg' height="200px">		
 </div>
+
+<p>
+<img src="images/output_images/hkbuilding_styles_combined.jpg" width="1000" height="550" />
+</p>
+Figure1. Using one model and making multi style transfer image. Center image is mixed with 4 style
