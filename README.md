@@ -9,7 +9,10 @@ It is based on the pytorch [fast-neural-style](https://github.com/pytorch/exampl
 
 Train
 ```
-python neural_style.py train --dataset /scratch/ywn202/style_train_data --style-image ./images/style_images/ --save-model-dir ./trained_models --epochs 5 --cuda 1 --log-interval 100 --batch-size 12
+python neural_style.py train --dataset /scratch/ywn202/style_train_data  \
+                             --style-image ./images/style_images/   \
+                             --save-model-dir ./trained_models   \
+                             --epochs 5 --cuda 1 --log-interval 100 --batch-size 12
 ```
 * `--dataset`: the content images that used to train the tranformer network in fast-neural-style-transfer.
 * `--style-image`: the dir where the style images stored. Images should be in .jpg format.
@@ -17,21 +20,23 @@ python neural_style.py train --dataset /scratch/ywn202/style_train_data --style-
 
 Stylize Image
 ```
-python neural_style.py eval --content-image ./images/content_images/hkbuilding.jpg --model ./trained_models/epoch_5_Sat_Dec__1_102704_2018_100000_10000000000.model --output-image hkbuilding --cuda 1 --style-num 4 --style-control 0 0 1 0
+python neural_style.py eval --content-image ./images/content_images/hkbuilding.jpg   \
+							--model ./trained_models/epoch_2_Sat_Dec_15_094409_2018_100000_10000000000.model   \
+							--output-image hkbuilding --cuda 1 \
+							--style-num 20 --style-control 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 1
 ```
 * `--content-image`: the image to stylized.
 * `--model`: the trained model with the transformer network to stylize the image.
-* `--output-image`: 
+* `--output-image`: the name prefix of the output image, it will be saved to ./results/
 * `--style-num`: total number of style images, must be the same as the amount used in training.
-* `--style-control`: a vector to specify which style(s) is/are tranferred. 
+* `--style-control`: a vector to specify which style(s) is/are combined & tranferred. 
 
 Stylize Video
 ```
 
 ```
 * `--style-num`: total number of style images, must be the same as the amount used in training.
-* `--style-control`: a vector to specify which style(s) is/are tranferred. 
-
+* `--style-control`: a vector to specify which style(s) is/are combined & tranferred. 
 
 ## Results
 
