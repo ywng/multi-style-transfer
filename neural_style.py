@@ -219,7 +219,7 @@ def main():
                                  help="path for saving the output image")
     eval_arg_parser.add_argument("--model", type=str, required=True,
                                  help="saved model to be used for stylizing the image. If file ends in .pth - PyTorch path is used, if in .onnx - Caffe2 path")
-    eval_arg_parser.add_argument("--cuda", type=int, required=True,
+    eval_arg_parser.add_argument("--cuda", type=int, 
                                  help="set it to 1 for running on GPU, 0 for CPU")
     eval_arg_parser.add_argument("--style-control", type=int, nargs='+', required = True,
                                  help="style control weights corresponding to the order in training")
