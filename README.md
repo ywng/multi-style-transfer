@@ -60,4 +60,13 @@ Example of combining 4 different styles:
 <img src="images/output_images/hkbuilding_styles_combined.jpg" width="1000" height="550" />
 </p>
 
+Example of combining 3 different styles in video:
+rain-princess
+mosaic
+udnie
 
+<div align = 'center'>
+     <a href = ''>
+        <img src = 'videos/output_videos/nyu_gif.gif' alt = '' width = '800px' height = '400px'>
+     </a>
+</div>
