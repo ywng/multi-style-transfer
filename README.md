@@ -51,7 +51,7 @@ python neural_style.py eval --content-video ./videos/content_videos/fox.mp4    \
 ### Pretrained model
 Models trained by us are saved in the **trained_models** folder. It is trained with the style images stored in the /images/style_images
 
-Example of combining 4 different styles:
+Example of combining 4 different styles to stylize an image:
 <div align='center'>
   <img src='images/content_images/hkbuilding.jpg' height="200px">		
 </div>
@@ -60,9 +60,9 @@ Example of combining 4 different styles:
 <img src="images/output_images/hkbuilding_styles_combined.jpg" width="1000" height="550" />
 </p>
 
-Example of combining 3 different styles in video:
-rain-princess
-mosaic
+Example of combining 3 different styles to stylize a video: <br />
+rain-princess <br />
+mosaic <br />
 udnie
 
 <div align = 'center'>
