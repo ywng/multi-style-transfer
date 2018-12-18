@@ -20,6 +20,10 @@ import utils
 from transformer import TransformerNet
 from vgg import Vgg16
 
+from moviepy.video.io.VideoFileClip import VideoFileClip
+import moviepy.video.io.ffmpeg_writer as ffmpeg_writer
+from PIL import Image
+
 
 def check_paths(args):
     try:
@@ -148,11 +152,16 @@ def train(args):
 
     print("\nDone, trained model saved at", save_model_path)
 
+def load_trained_model(args, device):
+    style_model = TransformerNet(style_num=args.style_num)
+    style_model.eval()
+    state_dict = torch.load(args.model)
+    style_model.load_state_dict(state_dict)
+    style_model.to(device)
+    return style_model
 
-def stylize(args):
+def stylize_one_img(args, content_image, style_control):
     device = torch.device("cuda" if args.cuda else "cpu")
-
-    content_image = utils.load_image(args.content_image, scale=args.content_scale)
     content_transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Lambda(lambda x: x.mul(255))
@@ -160,15 +169,56 @@ def stylize(args):
     content_image = content_transform(content_image)
     content_image = content_image.unsqueeze(0).to(device)
 
-
     with torch.no_grad():
-        style_model = TransformerNet(style_num=args.style_num)
-        state_dict = torch.load(args.model)
-        style_model.load_state_dict(state_dict)
-        style_model.to(device)
-        output = style_model(content_image, style_control=[args.style_control]).cpu()
+        style_model = load_trained_model(args, device)
+        output = style_model(content_image, style_control=[style_control]).cpu()
 
-    utils.save_image('./results/'+args.output_image+'_style'+''.join(str(e) for e in args.style_control)+'.jpg', output[0])
+    return output 
+
+def stylize_img(args):
+    content_image = utils.load_image(args.content_image, scale=args.content_scale)
+    output = stylize_one_img(args, content_image, args.style_control)
+    utils.save_image('./images/output_images/'+args.output_image+'_style'+''.join(str(e) for e in args.style_control)+'.jpg', output[0])
+
+def stylize_video(args):
+    batch_size = 4
+    video_clip = VideoFileClip(args.content_video, audio=False)
+    video_writer = ffmpeg_writer.FFMPEG_VideoWriter('./videos/output_videos/'+args.output_video+'_style'+''.join(str(e) for e in args.style_control)+'.mp4', 
+                        video_clip.size, video_clip.fps, codec="libx264",
+                        preset="medium", bitrate="2000k",
+                        audiofile=args.content_video, threads=None,
+                        ffmpeg_params=None)
+
+    batch_shape = (batch_size, video_clip.size[1], video_clip.size[0], 3)
+    X = np.zeros(batch_shape, dtype=np.float32)
+
+    def style_and_write(count, X):
+        outputs = list()
+        for i in range(count, batch_size):
+            X[i] = X[count - 1]  # Use last frame to fill X
+            
+        for i in range(0, count):
+            content_image = X[i]
+            output = stylize_one_img(args, content_image, args.style_control)
+            output = output[0].clone().clamp(0, 255).numpy()
+            output = output.transpose(1, 2, 0).astype("uint8")
+            output = Image.fromarray(output)
+            video_writer.write_frame(output)
+
+    frame_count = 0  # The frame count that written to X
+    for frame in video_clip.iter_frames():
+        X[frame_count] = frame
+        frame_count += 1
+        if frame_count % 10 == 0:
+            print("Processed %d frames." % frame_count)
+        if frame_count == batch_size:
+            style_and_write(frame_count, X)
+            frame_count = 0
+
+    if frame_count != 0:
+        style_and_write(frame_count, X)
+
+    video_writer.close()
 
 def main():
     main_arg_parser = argparse.ArgumentParser(description="parser for fast-neural-style")
@@ -211,12 +261,16 @@ def main():
     
 
     eval_arg_parser = subparsers.add_parser("eval", help="parser for evaluation/stylizing arguments")
-    eval_arg_parser.add_argument("--content-image", type=str, required=True,
+    eval_arg_parser.add_argument("--content-image", type=str, 
                                  help="path to content image you want to stylize")
+    eval_arg_parser.add_argument("--content-video", type=str, 
+                                 help="path to content video you want to stylize")
     eval_arg_parser.add_argument("--content-scale", type=float, default=None,
                                  help="factor for scaling down the content image")
-    eval_arg_parser.add_argument("--output-image", type=str, required=True,
+    eval_arg_parser.add_argument("--output-image", type=str, 
                                  help="path for saving the output image")
+    eval_arg_parser.add_argument("--output-video", type=str, 
+                                 help="path for saving the output video")
     eval_arg_parser.add_argument("--model", type=str, required=True,
                                  help="saved model to be used for stylizing the image. If file ends in .pth - PyTorch path is used, if in .onnx - Caffe2 path")
     eval_arg_parser.add_argument("--cuda", type=int, 
@@ -241,7 +295,10 @@ def main():
         check_paths(args)
         train(args)
     else:
-        stylize(args)
+        if args.content_video:
+            stylize_video(args)
+        else:
+            stylize_img(args)
 
 
 if __name__ == "__main__":
