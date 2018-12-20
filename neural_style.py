@@ -154,7 +154,6 @@ def train(args):
 
 def load_trained_model(args, device):
     style_model = TransformerNet(style_num=args.style_num)
-    style_model.eval()
     state_dict = torch.load(args.model)
     style_model.load_state_dict(state_dict)
     style_model.to(device)
